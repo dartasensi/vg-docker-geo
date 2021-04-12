@@ -1,0 +1,3 @@
+2021/04/11 15:16:26 [emerg] 1#1: "worker_processes" directive is not allowed here in /etc/nginx/conf.d/nginx.conf:1
+2021/04/11 15:20:23 [emerg] 1#1: "worker_processes" directive is not allowed here in /etc/nginx/conf.d/nginx.conf:1
+2021/04/11 23:01:00 [emerg] 1#1: "worker_processes" directive is not allowed here in /etc/nginx/conf.d/nginx.conf:1

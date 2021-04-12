@@ -1,0 +1,100 @@
+# INSPIRE Simple Geoportal
+#
+# NGINX: access via "http://localhost:80/"
+#
+# GeoNetwork: Access via "http://localhost:8080/geonetwork" (or "http://$(docker-machine ip):8080/geonetwork" if using docker-machine)
+# Default user: admin
+# Default password: admin
+#
+
+version: "3.1"
+services:
+  #NGINX
+  web:
+    image: nginx:alpine
+    container_name: web
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      # - /vagrant/resources/nginx/www:/var/www
+      - ./resources/nginx/www:/var/www
+      # - /vagrant/resources/nginx/conf.d:/etc/nginx/conf.d
+      - ./resources/nginx/conf.d:/etc/nginx/conf.d
+      # - /vagrant/resources/nginx/ssl:/etc/ssl
+      - ./resources/nginx/ssl:/etc/ssl
+      # logs
+      - ./resources/nginx/logs:/var/log/nginx
+    networks:
+      - geonet
+
+  # Elastic Search v7.10.2 single node, used for GeoNetwork v4.x
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    container_name: elastic
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - elastic_vol:/var/lib/elastic
+    networks:
+      - geonet
+
+  # GeoNetwork v3.10.6
+  geonetwork:
+    image: geonetwork:3.10.6
+    container_name: geonetwork
+    #restart: always
+    depends_on:
+      - elastic
+    ports:
+      - 8081:8080
+    environment:
+      - DATA_DIR=/var/lib/geonetwork_data
+    volumes:
+      - geonetwork_vol:/var/lib/geonetwork_data
+    networks:
+      - geonet
+
+  # Deegree
+  deegree:
+    #image: deegree:latest
+    image: deegree/deegree3-docker
+    container_name: deegree
+    ports:
+      - 8082:8080
+    environment:
+      - TEST=test
+    volumes:
+      - deegree_vol:/var/lib/deegree_data
+    networks:
+      - geonet
+
+  # Geoserver
+  geoserver:
+    image: oscarfonts/geoserver:2.18.2
+    container_name: geoserver
+    ports:
+      - 8083:8080
+    environment:
+      - TEST=test
+    volumes:
+      - geoserver_vol:/var/lib/geoserver_data
+    networks:
+      - geonet
+
+networks:
+  geonet:
+    driver: bridge
+
+volumes:
+  nginx_www_vol:
+  nginx_cfg_vol:
+  geonetwork_vol:
+  elastic_vol:
+  geoserver_vol:
+  deegree_vol:

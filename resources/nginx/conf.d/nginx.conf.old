@@ -1,0 +1,17 @@
+server {
+    listen 80;
+    index index.html;
+    error_log  /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+    root /var/www/public;
+
+    location / {
+        # return 302 /geonetwork;
+        # gzip_static on;
+    }
+	
+	location /geonetwork {
+        proxy_pass http://localhost:8080/geonetwork;
+		proxy_redirect default;
+    }
+}
