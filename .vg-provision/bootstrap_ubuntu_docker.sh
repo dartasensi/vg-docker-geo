@@ -12,8 +12,8 @@ DOCKER_COMPOSE_VERSION='1.29.0'
 DOCKER_COMPOSE_URL="https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)"
 DOCKER_COMPOSE_PATH='/usr/local/bin/docker-compose'
 
-echo "updating apt and installing required packages..."
-sudo apt -qq update && sudo apt -qq -y install \
+echo "updating and installing required packages..."
+sudo apt-get -qq -y update && sudo apt-get -qq -y install \
         apt-transport-https \
         ca-certificates \
         curl \
@@ -34,7 +34,7 @@ fi
 
 echo
 echo "installing docker..."
-sudo apt -qq update && sudo apt -qq -y install \
+sudo apt-get -qq -y update && sudo apt-get -qq -y install \
         docker-ce \
         docker-ce-cli \
         containerd.io
@@ -44,7 +44,7 @@ sudo apt -qq update && sudo apt -qq -y install \
 if [[ ! -f "${DOCKER_COMPOSE_PATH}" ]] ; then
   echo
   echo "installing docker-compose..."
-  sudo curl -L ${DOCKER_COMPOSE_URL} -o ${DOCKER_COMPOSE_PATH}
+  sudo curl -fsSL ${DOCKER_COMPOSE_URL} -o ${DOCKER_COMPOSE_PATH}
 fi
 
 sudo chmod +x ${DOCKER_COMPOSE_PATH}

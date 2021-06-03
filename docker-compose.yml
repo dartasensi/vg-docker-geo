@@ -1,29 +1,33 @@
 # INSPIRE Simple Geoportal
 #
-# NGINX: access via "http://localhost:80/"
+# NGINX:
+# access via "http://localhost:80/"
 #
-# GeoNetwork: Access via "http://localhost:8080/geonetwork" (or "http://$(docker-machine ip):8080/geonetwork" if using docker-machine)
-# Default user: admin
-# Default password: admin
+# GeoNetwork:
+# access via "http://localhost:8080/geonetwork"
+# default user: admin
+# default password: admin
+#
+# GeoServer:
+#
+# Deegree:
+# access via "http://localhost:8082/deegree-webservices/"
 #
 
 version: "3.1"
 services:
-  #NGINX
+  # NGINX - tested (TODO need .conf setup)
   web:
     image: nginx:alpine
     container_name: web
     restart: unless-stopped
-    tty: true
+    #tty: true
     ports:
       - 80:80
       - 443:443
     volumes:
-      # - /vagrant/resources/nginx/www:/var/www
-      - ./resources/nginx/www:/var/www
-      # - /vagrant/resources/nginx/conf.d:/etc/nginx/conf.d
+      - ./resources/nginx/site-content:/usr/share/nginx/html
       - ./resources/nginx/conf.d:/etc/nginx/conf.d
-      # - /vagrant/resources/nginx/ssl:/etc/ssl
       - ./resources/nginx/ssl:/etc/ssl
       # logs
       - ./resources/nginx/logs:/var/log/nginx
@@ -43,14 +47,29 @@ services:
       - elastic_vol:/var/lib/elastic
     networks:
       - geonet
+  # GeoNetwork 4 with Elastic Search
+  geonetwork_es:
+    image: geonetwork:3.10.6
+    container_name: geonetwork
+    #restart: always
+    #depends_on:
+    #  - elastic
+    ports:
+      - 8081:8080
+    environment:
+      - DATA_DIR=/var/lib/geonetwork_data
+    volumes:
+      - geonetwork_vol:/var/lib/geonetwork_data
+    networks:
+      - geonet
 
   # GeoNetwork v3.10.6
   geonetwork:
     image: geonetwork:3.10.6
     container_name: geonetwork
     #restart: always
-    depends_on:
-      - elastic
+    #depends_on:
+    #  - elastic
     ports:
       - 8081:8080
     environment:
@@ -67,8 +86,8 @@ services:
     container_name: deegree
     ports:
       - 8082:8080
-    environment:
-      - TEST=test
+    #environment:
+    #  - TEST=test
     volumes:
       - deegree_vol:/var/lib/deegree_data
     networks:
