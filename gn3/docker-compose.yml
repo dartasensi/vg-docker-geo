@@ -34,48 +34,65 @@ services:
     networks:
       - geonet
 
-  # Elastic Search v7.10.2 single node, used for GeoNetwork v4.x
-  elastic:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
-    container_name: elastic
+  # PostGIS 
+  postgis:
+    image: postgis/postgis
+    container_name: postgis
+    restart: unless-stopped
+    #tty: true
     ports:
-      - 9200:9200
-      - 9300:9300
-    environment:
-      - discovery.type=single-node
+      - 5432:5432
     volumes:
-      - elastic_vol:/var/lib/elastic
-    networks:
-      - geonet
-  # GeoNetwork 4 with Elastic Search
-  geonetwork_es:
-    image: geonetwork:3.10.6
-    container_name: geonetwork
-    #restart: always
-    #depends_on:
-    #  - elastic
-    ports:
-      - 8081:8080
-    environment:
-      - DATA_DIR=/var/lib/geonetwork_data
-    volumes:
-      - geonetwork_vol:/var/lib/geonetwork_data
+      - postgis_vol:/var/lib/postgresql
     networks:
       - geonet
 
-  # GeoNetwork v3.10.6
-  geonetwork:
-    image: geonetwork:3.10.6
-    container_name: geonetwork
+#  # Elastic Search v7.10.2 single node, used for GeoNetwork v4.x
+#  elastic:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+#    container_name: elastic
+#    ports:
+#      - 9200:9200
+#      - 9300:9300
+#    environment:
+#      - discovery.type=single-node
+#    volumes:
+#      - elastic_vol:/var/lib/elastic
+#    networks:
+#      - geonet
+#
+#  # GeoNetwork v4.x with Elastic Search
+#  geonetwork4:
+#    image: geonetwork:4
+#    container_name: geonetwork4
+#    #restart: always
+#    #depends_on:
+#    #  - elastic
+#    ports:
+#      - 8081:8080
+#    environment:
+#      - DATA_DIR=/var/lib/geonetwork_data
+#    volumes:
+#      - geonetwork_vol:/var/lib/geonetwork_data
+#    networks:
+#      - geonet
+
+
+  # GeoNetwork 3.x
+  geonetwork3:
+    image: geonetwork:3
+    container_name: geonetwork3
     #restart: always
     #depends_on:
-    #  - elastic
+    #  - postgis
     ports:
       - 8081:8080
     environment:
-      - DATA_DIR=/var/lib/geonetwork_data
+      - DATA_DIR=/var/lib/geonetwork/data
+      - GEONETWORK_DB_NAME=/var/lib/geonetwork/db/gn
     volumes:
-      - geonetwork_vol:/var/lib/geonetwork_data
+      - geonetwork_data_vol:/var/lib/geonetwork/data
+      - geonetwork_db_vol:/var/lib/geonetwork/db
     networks:
       - geonet
 
@@ -113,7 +130,15 @@ networks:
 volumes:
   nginx_www_vol:
   nginx_cfg_vol:
-  geonetwork_vol:
+  postgis_vol:
+    external:
+      name:postgis_persistent_volume
+  geonetwork_data_vol:
+    external:
+      name:gn_data_persist_volume
+  geonetwork_db_vol:
+    external:
+      name:gn_db_persist_volume
   elastic_vol:
   geoserver_vol:
   deegree_vol:
