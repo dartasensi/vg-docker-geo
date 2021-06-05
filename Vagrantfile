@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
       ## Display the VirtualBox GUI when booting the machine
       #vb.gui = false
 
-      # to apply when VBox > 6.1.14: set the display settings: VRAM, VMSVGA and 3D acceleration
+      # to apply when VBox > 6.1.14: set the display settings for VRAM, VMSVGA and 3D acceleration
       vb.customize ["modifyvm", :id, "--vram", "16"]
       vb.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
       vb.customize ["modifyvm", :id, "--accelerate3d", "on"]
