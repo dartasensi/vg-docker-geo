@@ -5,8 +5,9 @@ Vagrant.configure("2") do |config|
   # #####
   # configuration variables
   # #####
+  # ubuntu 20.10
   _vm_box = "ubuntu/groovy64"
-  _vm_name = "vg-ubuntu20.10-docker-geonetwork"
+  _vm_name = "vg-ubuntu20.10-docker-geo"
   _vm_hostname = "main.example.com"
 
   # #####
@@ -35,9 +36,9 @@ Vagrant.configure("2") do |config|
     # inside the guest vm, it should offer a balancer on port 80
     main.vm.network "forwarded_port", host: 10080, guest: 80, auto_correct: true
 
-    main.vm.network "forwarded_port", host: 18080, guest: 8080, auto_correct: true
-
     # only for debug purposes
+    main.vm.network "forwarded_port", host: 15432, guest: 5432, auto_correct: true
+    main.vm.network "forwarded_port", host: 18080, guest: 8080, auto_correct: true
     main.vm.network "forwarded_port", host: 18081, guest: 8081, auto_correct: true
     main.vm.network "forwarded_port", host: 18082, guest: 8082, auto_correct: true
     main.vm.network "forwarded_port", host: 18083, guest: 8083, auto_correct: true
