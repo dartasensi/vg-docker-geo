@@ -1,1 +1,1 @@
-docker-compose -d geonetwork3
+docker-compose up -d geonetwork3
