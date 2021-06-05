@@ -3,15 +3,10 @@
 # NGINX:
 # access via "http://localhost:80/"
 #
-# GeoNetwork:
+# GeoNetwork v3.x:
 # access via "http://localhost:8080/geonetwork"
 # default user: admin
 # default password: admin
-#
-# GeoServer:
-#
-# Deegree:
-# access via "http://localhost:8082/deegree-webservices/"
 #
 
 version: "3.1"
@@ -47,38 +42,7 @@ services:
     networks:
       - geonet
 
-#  # Elastic Search v7.10.2 single node, used for GeoNetwork v4.x
-#  elastic:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
-#    container_name: elastic
-#    ports:
-#      - 9200:9200
-#      - 9300:9300
-#    environment:
-#      - discovery.type=single-node
-#    volumes:
-#      - elastic_vol:/var/lib/elastic
-#    networks:
-#      - geonet
-#
-#  # GeoNetwork v4.x with Elastic Search
-#  geonetwork4:
-#    image: geonetwork:4
-#    container_name: geonetwork4
-#    #restart: always
-#    #depends_on:
-#    #  - elastic
-#    ports:
-#      - 8081:8080
-#    environment:
-#      - DATA_DIR=/var/lib/geonetwork_data
-#    volumes:
-#      - geonetwork_vol:/var/lib/geonetwork_data
-#    networks:
-#      - geonet
-
-
-  # GeoNetwork 3.x
+  # GeoNetwork v3.x
   geonetwork3:
     image: geonetwork:3
     container_name: geonetwork3
@@ -90,36 +54,10 @@ services:
     environment:
       - DATA_DIR=/var/lib/geonetwork/data
       - GEONETWORK_DB_NAME=/var/lib/geonetwork/db/gn
+      - JAVA_OPTS=-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -server -Xms2g -Xmx4g -XX:+UseConcMarkSweepGC
     volumes:
       - geonetwork_data_vol:/var/lib/geonetwork/data
       - geonetwork_db_vol:/var/lib/geonetwork/db
-    networks:
-      - geonet
-
-  # Deegree
-  deegree:
-    #image: deegree:latest
-    image: deegree/deegree3-docker
-    container_name: deegree
-    ports:
-      - 8082:8080
-    #environment:
-    #  - TEST=test
-    volumes:
-      - deegree_vol:/var/lib/deegree_data
-    networks:
-      - geonet
-
-  # Geoserver
-  geoserver:
-    image: oscarfonts/geoserver:2.18.2
-    container_name: geoserver
-    ports:
-      - 8083:8080
-    environment:
-      - TEST=test
-    volumes:
-      - geoserver_vol:/var/lib/geoserver_data
     networks:
       - geonet
 
@@ -132,13 +70,10 @@ volumes:
   nginx_cfg_vol:
   postgis_vol:
     external:
-      name:postgis_persistent_volume
+      name: postgis_persist_volume
   geonetwork_data_vol:
     external:
-      name:gn_data_persist_volume
+      name: gn_data_persist_volume
   geonetwork_db_vol:
     external:
-      name:gn_db_persist_volume
-  elastic_vol:
-  geoserver_vol:
-  deegree_vol:
+      name: gn_db_persist_volume
