@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # vg-docker-geo
 
 Vagrant + Docker + Geo services
@@ -14,8 +13,3 @@ Keep this line disabled: `vb.customize ["modifyvm", :id, "--natdnshostresolver1"
 ### bash completion with root user
 
 Open `/root/.bashrc` and remove the comments from lines (~98-100) like:
-
-=======
-# vg-docker-geo
-
->>>>>>> e7fc471202ecdd54593fae47ebf40ae7e9329688
