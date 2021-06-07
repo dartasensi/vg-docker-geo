@@ -34,7 +34,7 @@ In case you want to get rid of the volume each time you restart the containers, 
 
 It seems that this Vagrant+VirtualBox configuration produces issues in the Docker DNS resolver. The hosts are reachable within the guest OS, but not in the Docker containers.
 
-Keep this line disabled: `vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]`
+In order to fix this, keep **disabled** this line in the Vagrantfile: `vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]`
 
 ### Vagrant and VirtualBox
 
@@ -47,4 +47,6 @@ During a box update, Vagrant **will not remove** the Master VM generated in Virt
 ### Activate bash completion with root user
 
 Open `/root/.bashrc` and remove the comments from lines (~98-100) like:
+
+### 
 

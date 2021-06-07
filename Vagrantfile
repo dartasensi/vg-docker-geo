@@ -57,7 +57,7 @@ Vagrant.configure("2") do |config|
       # try to use VirtualBox linked clone
       vb.linked_clone = true
 
-      # ubuntu: cannot set the host as dns resolver, it breaks the dns resolver of docker containers
+      # ubuntu: with this distro, it can not set the host as dns resolver, it breaks the dns resolver of docker containers
       #vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       #vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
 
