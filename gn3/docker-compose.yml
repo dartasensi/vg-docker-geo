@@ -37,27 +37,51 @@ services:
     #tty: true
     ports:
       - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+    # ensure that the container will have enough shared memory
+    shm_size: 256mb
     volumes:
-      - postgis_vol:/var/lib/postgresql
+      - postgis_vol:/var/lib/postgresql/data
     networks:
       - geonet
 
-  # GeoNetwork v3.x
+#  # GeoNetwork v3.x (with internal H2 database)
+#  geonetwork3:
+#    image: geonetwork:3
+#    container_name: geonetwork3
+#    #restart: always
+#    ports:
+#      - 8081:8080
+#    environment:
+#      - DATA_DIR=/var/lib/geonetwork/data
+#      - GEONETWORK_DB_NAME=/var/lib/geonetwork/db/gn
+#      - JAVA_OPTS=-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -server -Xms2g -Xmx4g -XX:+UseConcMarkSweepGC
+#    volumes:
+#      - geonetwork_data_vol:/var/lib/geonetwork/data
+#      - geonetwork_h2_db_vol:/var/lib/geonetwork/db
+#    networks:
+#      - geonet
+
+  # GeoNetwork v3.x (PostGIS)
   geonetwork3:
-    image: geonetwork:3
+    image: geonetwork:3-postgres
     container_name: geonetwork3
     #restart: always
-    #depends_on:
-    #  - postgis
+    depends_on:
+      - postgis
     ports:
       - 8081:8080
     environment:
       - DATA_DIR=/var/lib/geonetwork/data
-      - GEONETWORK_DB_NAME=/var/lib/geonetwork/db/gn
+      - POSTGRES_DB_USERNAME=postgres
+      - POSTGRES_DB_PASSWORD=password
+      - POSTGRES_DB_HOST=postgis
+      - POSTGRES_DB_PORT=5432
+      - POSTGRES_DB_NAME=geonetwork
       - JAVA_OPTS=-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -server -Xms2g -Xmx4g -XX:+UseConcMarkSweepGC
     volumes:
       - geonetwork_data_vol:/var/lib/geonetwork/data
-      - geonetwork_db_vol:/var/lib/geonetwork/db
     networks:
       - geonet
 
@@ -74,6 +98,6 @@ volumes:
   geonetwork_data_vol:
     external:
       name: gn_data_persist_volume
-  geonetwork_db_vol:
+  geonetwork_h2_db_vol:
     external:
-      name: gn_db_persist_volume
+      name: gn_h2_db_persist_volume
